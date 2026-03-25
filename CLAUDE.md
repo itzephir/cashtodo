@@ -1,81 +1,67 @@
 # CashTodo
 
-iOS task tracker + finance tracker.
+iOS task tracker + finance tracker with bidirectional linking between tasks and operations.
 
 ## Tech Stack
 
-- **Language:** Swift (Swift 6 concurrency: `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`)
+- **Language:** Swift 5.0 (Swift 6 concurrency: `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`)
 - **UI:** UIKit (programmatic, no storyboards except LaunchScreen)
-- **Persistence:** CoreData
+- **Persistence:** CoreData (programmatic model via `CoreDataModelSetup`, no .xcdatamodeld)
 - **Architecture:** VIPER
+- **Layout:** `UIView+Pin.swift` extension for Auto Layout
+- **Localization:** English (base) + Russian via `Localizable.strings`, accessed through `L10n` enum
 - **Build:** Xcode 26.3, iOS 26.2 deployment target
 - **Bundle ID:** `com.itzephir.cashtodo`
-- **Project uses PBXFileSystemSynchronizedRootGroup** — files on disk auto-compile, no need to add to Xcode project manually.
+- **Project format:** `PBXFileSystemSynchronizedRootGroup` — files on disk auto-compile
 
-## Architecture
+## Architecture (VIPER)
 
-VIPER pattern for each module. Each module contains:
+Each module: `Protocols.swift`, `Assembly.swift`, `ViewController.swift`, `Interactor.swift`, `Presenter.swift`, `Router.swift`
 
-- `Protocols.swift` — module protocols
-- `Assembly.swift` — enum with static `build()` method
-- `ViewController.swift` — view layer
-- `Interactor.swift` — business logic
-- `Presenter.swift` — presentation logic
-- `Router.swift` — navigation
+Protocol naming: `BusinessLogic`, `DataStore`, `PresentationLogic`, `DisplayLogic`, `RoutingLogic`
 
-### Protocol Naming
+DI: services passed through `Assembly.build()` → Interactor constructor.
 
-- `BusinessLogic` — interactor input
-- `DataStore` — interactor data
-- `PresentationLogic` — presenter input
-- `DisplayLogic` — view input
-- `RoutingLogic` — router input
+## Modules
 
-### Dependency Injection
-
-Services use protocol-first design with CoreData implementations. DI is done by passing services through `Assembly.build()` into Interactors.
-
-## Project Structure
-
-```
-cashtodo/
-├── App/          (AppDelegate, SceneDelegate)
-├── Core/         (Constants, Extensions, Protocols, CoreData)
-├── Models/       (NSManagedObject subclasses)
-├── Services/     (TodoService, OperationService, CategoryService)
-├── Modules/      (VIPER modules: TabBar, TodoList, TodoDetail, OperationList, OperationEdit)
-└── Resources/    (Assets.xcassets, LaunchScreen.storyboard)
-```
+- **TabBar** — 2 tabs (Tasks, Finance)
+- **TodoList** — task list with checkbox toggle, swipe-to-delete
+- **TodoDetail** — view/edit task, linked operations section
+- **OperationList** — operations grouped by category, debt section, date filter chips
+- **OperationEdit** — create/edit operation with category and todo pickers
 
 ## CoreData Entities
 
-- **TodoItem:** id, title, descriptionText, isCompleted, createdAt, price (optional Decimal)
-- **FinancialOperation:** id, title, amount, date + relationships to Category and TodoItem
-- **Category:** id, name, iconName (SF Symbol)
+- **TodoItem:** id, title, descriptionText?, isCompleted, createdAt, price? → operations (to-many)
+- **FinancialOperation:** id, title, amount, date → category (to-one), todoItem? (to-one)
+- **Category:** id, name, iconName → operations (to-many, deny delete)
 
-## Navigation
+## Key Business Rules
 
-2-tab `UITabBarController`:
+- Completing a todo with price → auto-creates FinancialOperation for the full amount
+- Linking an operation to a todo → subtracts amount from todo.price (clamped to 0)
+- Unlinking/deleting an operation → restores amount to todo.price
+- Cannot delete a category that has operations
 
-1. **Задачи** — task list
-2. **Финансы** — financial operations list. Debt shown as top section.
+## Constants & Localization
 
-## Layout
-
-`UIView+Pin.swift` extension for Auto Layout constraints.
+- All UI constants in `Core/Constants/Constants.swift` (paddings, sizes, icons)
+- All user-visible strings in `Core/Constants/L10n.swift` → `Localizable.strings` (en, ru)
+- Currency formatting uses `Locale.current`
 
 ## Tests
 
-`cashtodoTests` target. Services tested with in-memory CoreData stack.
+30 unit tests in `cashtodoTests/Services/` using `CoreDataStack(inMemory: true)`:
+- `TodoServiceTests` (9) — CRUD, toggle, fetch queries
+- `OperationServiceTests` (15) — CRUD, price adjustment on link/unlink/delete
+- `CategoryServiceTests` (6) — seed, CRUD, delete protection
 
 ## Commands
 
-Build:
 ```bash
-xcodebuild -scheme cashtodo -sdk iphonesimulator build
-```
+# Build
+xcodebuild -scheme cashtodo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
-Test:
-```bash
-xcodebuild -scheme cashtodo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' test
+# Test
+xcodebuild -scheme cashtodo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
