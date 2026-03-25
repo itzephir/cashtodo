@@ -48,20 +48,50 @@ final class OperationService: OperationServiceProtocol {
         operation.date = date
         operation.category = category
         operation.todoItem = todoItem
+
+        if let todo = todoItem, let price = todo.price {
+            let newPrice = price.subtracting(amount)
+            todo.price = newPrice.compare(NSDecimalNumber.zero) == .orderedAscending
+                ? NSDecimalNumber.zero
+                : newPrice
+        }
+
         coreDataStack.saveContext()
         return operation
     }
 
     func updateOperation(_ operation: FinancialOperation, title: String, amount: NSDecimalNumber, date: Date, category: Category, todoItem: TodoItem?) {
+        let oldTodo = operation.todoItem
+        let oldAmount = operation.amount
+
+        // Restore price on old linked todo
+        if let todo = oldTodo, let price = todo.price {
+            todo.price = price.adding(oldAmount)
+        }
+
         operation.title = title
         operation.amount = amount
         operation.date = date
         operation.category = category
         operation.todoItem = todoItem
+
+        // Subtract from new linked todo
+        if let todo = todoItem, let price = todo.price {
+            let newPrice = price.subtracting(amount)
+            todo.price = newPrice.compare(NSDecimalNumber.zero) == .orderedAscending
+                ? NSDecimalNumber.zero
+                : newPrice
+        }
+
         coreDataStack.saveContext()
     }
 
     func deleteOperation(_ operation: FinancialOperation) {
+        // Restore price on linked todo
+        if let todo = operation.todoItem, let price = todo.price {
+            todo.price = price.adding(operation.amount)
+        }
+
         coreDataStack.viewContext.delete(operation)
         coreDataStack.saveContext()
     }

@@ -98,6 +98,100 @@ final class OperationServiceTests: XCTestCase {
         XCTAssertEqual(operation.category?.id, category2.id)
     }
 
+    // MARK: - Price adjustment on link
+
+    func testCreateOperationReducesTodoPrice() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 60))
+    }
+
+    func testCreateMultipleOperationsReducesTodoPriceProgressively() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+        sut.createOperation(title: "Bread", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo)
+
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 30))
+    }
+
+    func testCreateOperationClampsToZero() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Small task", descriptionText: nil, price: NSDecimalNumber(value: 20))
+
+        sut.createOperation(title: "Overspend", amount: NSDecimalNumber(value: 50), date: Date(), category: category, todoItem: todo)
+
+        XCTAssertEqual(todo.price, NSDecimalNumber.zero)
+    }
+
+    func testCreateOperationWithoutTodoDoesNotAffectAnything() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Unrelated", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        sut.createOperation(title: "Standalone", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: nil)
+
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 100))
+    }
+
+    func testCreateOperationWithNilPriceTodoDoesNotCrash() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "No price", descriptionText: nil, price: nil)
+
+        sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 10), date: Date(), category: category, todoItem: todo)
+
+        XCTAssertNil(todo.price)
+    }
+
+    func testDeleteOperationRestoresTodoPrice() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        let op = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 60))
+
+        sut.deleteOperation(op)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 100))
+    }
+
+    func testUpdateOperationAdjustsPriceOnAmountChange() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        let op = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 60))
+
+        sut.updateOperation(op, title: "Carrots", amount: NSDecimalNumber(value: 70), date: Date(), category: category, todoItem: todo)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 30))
+    }
+
+    func testUpdateOperationRelinkAdjustsBothTodos() {
+        let category = makeCategory()
+        let todo1 = todoService.createTodo(title: "Task 1", descriptionText: nil, price: NSDecimalNumber(value: 100))
+        let todo2 = todoService.createTodo(title: "Task 2", descriptionText: nil, price: NSDecimalNumber(value: 200))
+
+        let op = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo1)
+        XCTAssertEqual(todo1.price, NSDecimalNumber(value: 70))
+
+        sut.updateOperation(op, title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo2)
+        XCTAssertEqual(todo1.price, NSDecimalNumber(value: 100))
+        XCTAssertEqual(todo2.price, NSDecimalNumber(value: 170))
+    }
+
+    func testUpdateOperationUnlinkRestoresPrice() {
+        let category = makeCategory()
+        let todo = todoService.createTodo(title: "Task", descriptionText: nil, price: NSDecimalNumber(value: 100))
+
+        let op = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: todo)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 75))
+
+        sut.updateOperation(op, title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: nil)
+        XCTAssertEqual(todo.price, NSDecimalNumber(value: 100))
+    }
+
     // MARK: - Delete
 
     func testDeleteOperation() {
