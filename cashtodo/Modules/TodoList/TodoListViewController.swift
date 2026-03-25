@@ -9,7 +9,7 @@ final class TodoListViewController: UIViewController {
 
     // MARK: - UI
 
-    private let tableView = UITableView(frame: .zero, style: .plain)
+    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
     private let emptyStateView: UIView = {
         let view = UIView()

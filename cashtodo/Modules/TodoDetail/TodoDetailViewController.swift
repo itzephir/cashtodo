@@ -36,8 +36,8 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     private let titleTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = L10n.labelName
-        tf.font = .systemFont(ofSize: Constants.Font.largeTitle, weight: .bold)
-        tf.borderStyle = .none
+        tf.font = .systemFont(ofSize: Constants.Font.title)
+        tf.borderStyle = .roundedRect
         tf.returnKeyType = .next
         return tf
     }()
@@ -123,7 +123,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemGroupedBackground
         priceTextField.delegate = decimalDelegate
         setupLayout()
         setupActions()
