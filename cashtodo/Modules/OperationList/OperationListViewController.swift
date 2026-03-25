@@ -10,8 +10,13 @@ final class OperationListViewController: UIViewController {
     // MARK: - UI
 
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
-    private var tableTopToChips: NSLayoutConstraint!
-    private var tableTopToDateRange: NSLayoutConstraint!
+
+    private let headerStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .vertical
+        sv.spacing = 0
+        return sv
+    }()
 
     private let chipScrollView: UIScrollView = {
         let sv = UIScrollView()
@@ -83,9 +88,8 @@ final class OperationListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         configureNavigationBar()
-        configureChipBar()
-        configureDateRange()
         configureTableView()
+        buildTableHeader()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,7 +101,7 @@ final class OperationListViewController: UIViewController {
 
     private func configureNavigationBar() {
         navigationItem.title = "Финансы"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: Constants.Icon.add),
             style: .plain,
@@ -106,19 +110,28 @@ final class OperationListViewController: UIViewController {
         )
     }
 
-    private func configureChipBar() {
-        view.addSubview(chipScrollView)
-        chipScrollView.pinTop(to: view.safeAreaLayoutGuide.topAnchor)
-        chipScrollView.pinLeft(to: view)
-        chipScrollView.pinRight(to: view)
-        chipScrollView.setHeight(Constants.UI.chipBarHeight)
+    private func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(DebtCell.self, forCellReuseIdentifier: CellID.debt)
+        tableView.register(OperationListCell.self, forCellReuseIdentifier: CellID.operation)
 
+        view.addSubview(tableView)
+        tableView.pin(to: view)
+    }
+
+    private func buildTableHeader() {
+        // Chip scroll — fixed height, content scrolls horizontally
+        chipScrollView.setHeight(Constants.UI.chipBarHeight)
         chipScrollView.addSubview(chipStackView)
-        chipStackView.pinTop(to: chipScrollView)
-        chipStackView.pinBottom(to: chipScrollView)
-        chipStackView.pinLeft(to: chipScrollView)
-        chipStackView.pinRight(to: chipScrollView)
-        chipStackView.pinHeight(to: chipScrollView.heightAnchor)
+        chipStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            chipStackView.topAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.topAnchor),
+            chipStackView.bottomAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.bottomAnchor),
+            chipStackView.leadingAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.leadingAnchor),
+            chipStackView.trailingAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.trailingAnchor),
+            chipStackView.heightAnchor.constraint(equalTo: chipScrollView.frameLayoutGuide.heightAnchor),
+        ])
 
         let filters: [DateFilter] = DateFilter.presets + [.custom(from: Date(), to: Date())]
         for filter in filters {
@@ -126,16 +139,9 @@ final class OperationListViewController: UIViewController {
             chipStackView.addArrangedSubview(btn)
             chipButtons.append(btn)
         }
-
         updateChipSelection()
-    }
 
-    private func configureDateRange() {
-        view.addSubview(dateRangeContainer)
-        dateRangeContainer.pinTop(to: chipScrollView.bottomAnchor)
-        dateRangeContainer.pinLeft(to: view)
-        dateRangeContainer.pinRight(to: view)
-
+        // Date range pickers
         let fromLabel = UILabel()
         fromLabel.text = "От"
         fromLabel.font = .systemFont(ofSize: Constants.Font.caption, weight: .medium)
@@ -161,38 +167,43 @@ final class OperationListViewController: UIViewController {
         pickersRow.distribution = .fillEqually
         pickersRow.spacing = Constants.UI.standardPadding
 
-        let root = UIStackView(arrangedSubviews: [pickersRow, applyButton])
-        root.axis = .vertical
-        root.spacing = Constants.UI.smallPadding
-        root.alignment = .fill
-
-        dateRangeContainer.addSubview(root)
-        root.pinTop(to: dateRangeContainer, Constants.UI.smallPadding)
-        root.pinBottom(to: dateRangeContainer, Constants.UI.smallPadding)
-        root.pinLeft(to: dateRangeContainer, Constants.UI.standardPadding)
-        root.pinRight(to: dateRangeContainer, Constants.UI.standardPadding)
-
         applyButton.setHeight(36)
         applyButton.layer.cornerRadius = Constants.UI.smallCornerRadius
         applyButton.backgroundColor = .systemBlue
         applyButton.setTitleColor(.white, for: .normal)
         applyButton.addTarget(self, action: #selector(applyDateRange), for: .touchUpInside)
+
+        let dateStack = UIStackView(arrangedSubviews: [pickersRow, applyButton])
+        dateStack.axis = .vertical
+        dateStack.spacing = Constants.UI.smallPadding
+        dateStack.alignment = .fill
+        dateStack.layoutMargins = UIEdgeInsets(
+            top: Constants.UI.smallPadding,
+            left: Constants.UI.standardPadding,
+            bottom: Constants.UI.smallPadding,
+            right: Constants.UI.standardPadding
+        )
+        dateStack.isLayoutMarginsRelativeArrangement = true
+        dateRangeContainer.addSubview(dateStack)
+        dateStack.pin(to: dateRangeContainer)
+
+        // Header stack: chips + dateRange (collapses when hidden)
+        headerStackView.addArrangedSubview(chipScrollView)
+        headerStackView.addArrangedSubview(dateRangeContainer)
+
+        updateTableHeader()
     }
 
-    private func configureTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(DebtCell.self, forCellReuseIdentifier: CellID.debt)
-        tableView.register(OperationListCell.self, forCellReuseIdentifier: CellID.operation)
-
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableTopToChips = tableView.topAnchor.constraint(equalTo: chipScrollView.bottomAnchor)
-        tableTopToDateRange = tableView.topAnchor.constraint(equalTo: dateRangeContainer.bottomAnchor)
-        tableTopToChips.isActive = true
-        tableView.pinLeft(to: view)
-        tableView.pinRight(to: view)
-        tableView.pinBottom(to: view)
+    private func updateTableHeader() {
+        let width = tableView.bounds.width > 0 ? tableView.bounds.width : UIScreen.main.bounds.width
+        let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
+        let size = headerStackView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        headerStackView.frame = CGRect(origin: .zero, size: size)
+        tableView.tableHeaderView = headerStackView
     }
 
     // MARK: - Chip helpers
@@ -237,19 +248,14 @@ final class OperationListViewController: UIViewController {
         let presets = DateFilter.presets
         if sender.tag < presets.count {
             selectedFilter = presets[sender.tag]
-            setDateRangeVisible(false)
+            dateRangeContainer.isHidden = true
         } else {
             selectedFilter = .custom(from: fromPicker.date, to: toPicker.date)
-            setDateRangeVisible(true)
+            dateRangeContainer.isHidden = false
         }
         updateChipSelection()
+        updateTableHeader()
         interactor?.applyFilter(selectedFilter)
-    }
-
-    private func setDateRangeVisible(_ visible: Bool) {
-        dateRangeContainer.isHidden = !visible
-        tableTopToChips.isActive = !visible
-        tableTopToDateRange.isActive = visible
     }
 
     @objc private func applyDateRange() {
