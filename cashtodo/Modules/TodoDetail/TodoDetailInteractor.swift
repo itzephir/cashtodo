@@ -88,9 +88,9 @@ enum TodoDetailError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .todoNotFound:
-            return "Задача не найдена"
+            return L10n.errorTodoNotFound
         case .invalidPrice:
-            return "Некорректная цена"
+            return L10n.errorInvalidPrice
         }
     }
 }

@@ -35,7 +35,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let titleTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Название"
+        tf.placeholder = L10n.labelName
         tf.font = .systemFont(ofSize: Constants.Font.largeTitle, weight: .bold)
         tf.borderStyle = .none
         tf.returnKeyType = .next
@@ -44,7 +44,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Описание"
+        label.text = L10n.labelDescription
         label.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .medium)
         label.textColor = .secondaryLabel
         return label
@@ -68,7 +68,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цена"
+        label.text = L10n.labelPrice
         label.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .medium)
         label.textColor = .secondaryLabel
         return label
@@ -76,7 +76,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let priceTextField: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "0.00"
+        tf.placeholder = L10n.placeholderPrice
         tf.font = .systemFont(ofSize: Constants.Font.price)
         tf.keyboardType = .decimalPad
         tf.borderStyle = .roundedRect
@@ -85,7 +85,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let operationsHeaderLabel: UILabel = {
         let label = UILabel()
-        label.text = "Связанные операции"
+        label.text = L10n.labelLinkedOps
         label.font = .systemFont(ofSize: Constants.Font.title, weight: .semibold)
         return label
     }()
@@ -99,7 +99,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let emptyOperationsLabel: UILabel = {
         let label = UILabel()
-        label.text = "Нет связанных операций"
+        label.text = L10n.emptyLinkedOps
         label.font = .systemFont(ofSize: Constants.Font.subtitle)
         label.textColor = .tertiaryLabel
         label.textAlignment = .center
@@ -108,7 +108,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     private let deleteButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Удалить", for: .normal)
+        button.setTitle(L10n.buttonDelete, for: .normal)
         button.setTitleColor(.systemRed, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: Constants.Font.title, weight: .medium)
         button.layer.borderColor = UIColor.systemRed.cgColor
@@ -186,13 +186,13 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
         if isEditingMode {
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "Сохранить",
+                title: L10n.buttonSave,
                 style: .done,
                 target: self,
                 action: #selector(saveButtonTapped)
             )
             navigationItem.leftBarButtonItem = UIBarButtonItem(
-                title: "Отмена",
+                title: L10n.buttonCancel,
                 style: .plain,
                 target: self,
                 action: #selector(cancelButtonTapped)
@@ -219,7 +219,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     @objc private func saveButtonTapped() {
         let title = titleTextField.text ?? ""
         guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            displayError("Название не может быть пустым")
+            displayError(L10n.errorEmptyTitle)
             return
         }
         let descriptionText = descriptionTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -243,12 +243,12 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     @objc private func deleteButtonTapped() {
         let alert = UIAlertController(
-            title: "Удалить задачу?",
-            message: "Это действие нельзя отменить.",
+            title: L10n.alertDeleteTask,
+            message: L10n.alertCannotUndo,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: L10n.buttonCancel, style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.buttonDelete, style: .destructive) { [weak self] _ in
             self?.interactor?.deleteTodo()
         })
         present(alert, animated: true)
@@ -271,7 +271,7 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
         titleTextField.text = ""
         descriptionTextView.text = ""
         priceTextField.text = ""
-        title = "Новая задача"
+        title = L10n.todoNew
 
         operationsHeaderLabel.isHidden = true
         operationsStackView.isHidden = true
@@ -291,11 +291,11 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
     func displayError(_ message: String) {
         let alert = UIAlertController(
-            title: "Ошибка",
+            title: L10n.errorTitle,
             message: message,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: L10n.buttonOK, style: .default))
         present(alert, animated: true)
     }
 

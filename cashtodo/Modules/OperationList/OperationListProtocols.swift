@@ -33,11 +33,11 @@ enum DateFilter: Equatable {
 
     var title: String {
         switch self {
-        case .all: "Все"
-        case .today: "Сегодня"
-        case .week: "Неделя"
-        case .month: "Месяц"
-        case .custom: "Период"
+        case .all: L10n.filterAll
+        case .today: L10n.filterToday
+        case .week: L10n.filterWeek
+        case .month: L10n.filterMonth
+        case .custom: L10n.filterPeriod
         }
     }
 

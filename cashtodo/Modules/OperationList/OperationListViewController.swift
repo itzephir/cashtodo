@@ -61,7 +61,7 @@ final class OperationListViewController: UIViewController {
 
     private let applyButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle("Применить", for: .normal)
+        btn.setTitle(L10n.buttonApply, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .semibold)
         return btn
     }()
@@ -100,7 +100,7 @@ final class OperationListViewController: UIViewController {
     // MARK: - Configuration
 
     private func configureNavigationBar() {
-        navigationItem.title = "Финансы"
+        navigationItem.title = L10n.financeTitle
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: Constants.Icon.add),
@@ -143,12 +143,12 @@ final class OperationListViewController: UIViewController {
 
         // Date range pickers
         let fromLabel = UILabel()
-        fromLabel.text = "От"
+        fromLabel.text = L10n.labelFrom
         fromLabel.font = .systemFont(ofSize: Constants.Font.caption, weight: .medium)
         fromLabel.textColor = .secondaryLabel
 
         let toLabel = UILabel()
-        toLabel.text = "До"
+        toLabel.text = L10n.labelTo
         toLabel.font = .systemFont(ofSize: Constants.Font.caption, weight: .medium)
         toLabel.textColor = .secondaryLabel
 

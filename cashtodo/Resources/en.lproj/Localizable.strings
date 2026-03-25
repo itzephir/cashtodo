@@ -1,0 +1,62 @@
+/* Tabs & Navigation */
+"tab.todos" = "Tasks";
+"tab.finance" = "Finance";
+"todo.title" = "Tasks";
+"finance.title" = "Finance";
+"operation.title" = "Operation";
+"todo.new" = "New Task";
+
+/* Buttons */
+"button.save" = "Save";
+"button.cancel" = "Cancel";
+"button.delete" = "Delete";
+"button.apply" = "Apply";
+"button.ok" = "OK";
+
+/* Labels & Placeholders */
+"label.name" = "Title";
+"label.description" = "Description";
+"label.price" = "Price";
+"label.amount" = "Amount";
+"label.date" = "Date";
+"label.category" = "Category";
+"label.linkedTask" = "Linked Task";
+"label.linkedOps" = "Related Operations";
+"label.from" = "From";
+"label.to" = "To";
+"label.none" = "None";
+"placeholder.price" = "0.00";
+
+/* Empty State */
+"empty.todos" = "No tasks";
+"empty.linkedOps" = "No related operations";
+
+/* Errors & Alerts */
+"error.title" = "Error";
+"error.todoNotFound" = "Task not found";
+"error.invalidPrice" = "Invalid price";
+"error.emptyTitle" = "Title cannot be empty";
+"error.invalidAmount" = "Enter a valid amount greater than 0";
+"error.selectCategory" = "Select a category";
+"error.enterOpTitle" = "Enter operation title";
+"alert.deleteTask" = "Delete task?";
+"alert.cannotUndo" = "This action cannot be undone.";
+
+/* Date Filters */
+"filter.all" = "All";
+"filter.today" = "Today";
+"filter.week" = "Week";
+"filter.month" = "Month";
+"filter.period" = "Period";
+
+/* Dynamic */
+"debt.header" = "Debts: %@";
+
+/* Default Categories */
+"category.food" = "Food";
+"category.transport" = "Transport";
+"category.shopping" = "Shopping";
+"category.entertainment" = "Entertainment";
+"category.bills" = "Bills";
+"category.health" = "Health";
+"category.other" = "Other";

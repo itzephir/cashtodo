@@ -19,7 +19,7 @@ final class OperationEditViewController: UIViewController {
 
     private let titleTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Название"
+        field.placeholder = L10n.labelName
         field.borderStyle = .roundedRect
         field.font = .systemFont(ofSize: Constants.Font.title)
         return field
@@ -27,7 +27,7 @@ final class OperationEditViewController: UIViewController {
 
     private let amountTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Сумма"
+        field.placeholder = L10n.labelAmount
         field.borderStyle = .roundedRect
         field.keyboardType = .decimalPad
         field.font = .systemFont(ofSize: Constants.Font.title)
@@ -46,7 +46,7 @@ final class OperationEditViewController: UIViewController {
 
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.text = "Дата"
+        label.text = L10n.labelDate
         label.font = .systemFont(ofSize: Constants.Font.subtitle)
         label.textColor = .secondaryLabel
         return label
@@ -54,7 +54,7 @@ final class OperationEditViewController: UIViewController {
 
     private let categoryLabel: UILabel = {
         let label = UILabel()
-        label.text = "Категория"
+        label.text = L10n.labelCategory
         label.font = .systemFont(ofSize: Constants.Font.subtitle)
         label.textColor = .secondaryLabel
         return label
@@ -62,7 +62,7 @@ final class OperationEditViewController: UIViewController {
 
     private let todoLabel: UILabel = {
         let label = UILabel()
-        label.text = "Связанная задача"
+        label.text = L10n.labelLinkedTask
         label.font = .systemFont(ofSize: Constants.Font.subtitle)
         label.textColor = .secondaryLabel
         return label
@@ -82,7 +82,7 @@ final class OperationEditViewController: UIViewController {
     // MARK: - Configuration
 
     private func configureNavigationBar() {
-        navigationItem.title = "Операция"
+        navigationItem.title = L10n.operationTitle
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
@@ -212,11 +212,11 @@ extension OperationEditViewController: OperationEditDisplayLogic {
 
     func displayValidationError(_ message: String) {
         let alert = UIAlertController(
-            title: "Ошибка",
+            title: L10n.errorTitle,
             message: message,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: L10n.buttonOK, style: .default))
         present(alert, animated: true)
     }
 
@@ -253,7 +253,7 @@ extension OperationEditViewController: UIPickerViewDelegate {
             return categories[row].name
         }
         if row == 0 {
-            return "Нет"
+            return L10n.labelNone
         }
         let todoIndex = row - 1
         guard todoIndex < todos.count else { return nil }

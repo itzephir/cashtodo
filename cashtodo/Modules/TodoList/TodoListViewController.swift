@@ -28,7 +28,7 @@ final class TodoListViewController: UIViewController {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "Нет задач"
+        label.text = L10n.emptyTodos
         label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: Constants.Font.title)
         label.textAlignment = .center
@@ -56,7 +56,7 @@ final class TodoListViewController: UIViewController {
     // MARK: - Configuration
 
     private func configureNavigationBar() {
-        navigationItem.title = "Задачи"
+        navigationItem.title = L10n.todoTitle
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: Constants.Icon.add),
@@ -117,8 +117,8 @@ extension TodoListViewController: TodoListDisplayLogic {
     }
 
     func displayError(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: L10n.errorTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.buttonOK, style: .default))
         present(alert, animated: true)
     }
 }
@@ -163,7 +163,7 @@ extension TodoListViewController: UITableViewDelegate {
     ) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Удалить"
+            title: L10n.buttonDelete
         ) { [weak self] _, _, completionHandler in
             self?.interactor?.deleteTodo(at: indexPath.row)
             completionHandler(true)

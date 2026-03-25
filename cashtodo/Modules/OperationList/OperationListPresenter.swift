@@ -33,7 +33,7 @@ final class OperationListPresenter: OperationListPresentationLogic {
             result.adding(todo.price ?? .zero)
         }
         let totalDebtText = currencyFormatter.string(from: totalDebt) ?? "0"
-        let debtHeader = DebtHeaderViewModel(totalDebtText: "Долги: \(totalDebtText)")
+        let debtHeader = DebtHeaderViewModel(totalDebtText: L10n.debtHeader(totalDebtText))
         viewController?.displayDebtHeader(debtHeader)
 
         // Debt items

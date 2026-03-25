@@ -1,0 +1,62 @@
+/* Tabs & Navigation */
+"tab.todos" = "Задачи";
+"tab.finance" = "Финансы";
+"todo.title" = "Задачи";
+"finance.title" = "Финансы";
+"operation.title" = "Операция";
+"todo.new" = "Новая задача";
+
+/* Buttons */
+"button.save" = "Сохранить";
+"button.cancel" = "Отмена";
+"button.delete" = "Удалить";
+"button.apply" = "Применить";
+"button.ok" = "OK";
+
+/* Labels & Placeholders */
+"label.name" = "Название";
+"label.description" = "Описание";
+"label.price" = "Цена";
+"label.amount" = "Сумма";
+"label.date" = "Дата";
+"label.category" = "Категория";
+"label.linkedTask" = "Связанная задача";
+"label.linkedOps" = "Связанные операции";
+"label.from" = "От";
+"label.to" = "До";
+"label.none" = "Нет";
+"placeholder.price" = "0.00";
+
+/* Empty State */
+"empty.todos" = "Нет задач";
+"empty.linkedOps" = "Нет связанных операций";
+
+/* Errors & Alerts */
+"error.title" = "Ошибка";
+"error.todoNotFound" = "Задача не найдена";
+"error.invalidPrice" = "Некорректная цена";
+"error.emptyTitle" = "Название не может быть пустым";
+"error.invalidAmount" = "Введите корректную сумму больше 0";
+"error.selectCategory" = "Выберите категорию";
+"error.enterOpTitle" = "Введите название операции";
+"alert.deleteTask" = "Удалить задачу?";
+"alert.cannotUndo" = "Это действие нельзя отменить.";
+
+/* Date Filters */
+"filter.all" = "Все";
+"filter.today" = "Сегодня";
+"filter.week" = "Неделя";
+"filter.month" = "Месяц";
+"filter.period" = "Период";
+
+/* Dynamic */
+"debt.header" = "Долги: %@";
+
+/* Default Categories */
+"category.food" = "Еда";
+"category.transport" = "Транспорт";
+"category.shopping" = "Покупки";
+"category.entertainment" = "Развлечения";
+"category.bills" = "Счета";
+"category.health" = "Здоровье";
+"category.other" = "Прочее";

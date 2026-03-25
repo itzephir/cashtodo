@@ -8,7 +8,7 @@ enum TabBarAssembly {
             rootViewController: TodoListAssembly.build()
         )
         todoNav.tabBarItem = UITabBarItem(
-            title: "Задачи",
+            title: L10n.tabTodos,
             image: UIImage(systemName: Constants.Icon.tabTodos),
             tag: 0
         )
@@ -18,7 +18,7 @@ enum TabBarAssembly {
             rootViewController: OperationListAssembly.build()
         )
         financeNav.tabBarItem = UITabBarItem(
-            title: "Финансы",
+            title: L10n.tabFinance,
             image: UIImage(systemName: Constants.Icon.tabFinance),
             tag: 1
         )

@@ -90,7 +90,7 @@ final class OperationEditInteractor: OperationEditBusinessLogic, OperationEditDa
         // Validation
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
-            presenter?.presentValidationError("Введите название операции")
+            presenter?.presentValidationError(L10n.errorEnterOpTitle)
             return
         }
 
@@ -98,12 +98,12 @@ final class OperationEditInteractor: OperationEditBusinessLogic, OperationEditDa
         let amount = NSDecimalNumber(string: sanitizedAmount)
         guard amount != NSDecimalNumber.notANumber,
               amount.compare(NSDecimalNumber.zero) == .orderedDescending else {
-            presenter?.presentValidationError("Введите корректную сумму больше 0")
+            presenter?.presentValidationError(L10n.errorInvalidAmount)
             return
         }
 
         guard categoryIndex >= 0, categoryIndex < categories.count else {
-            presenter?.presentValidationError("Выберите категорию")
+            presenter?.presentValidationError(L10n.errorSelectCategory)
             return
         }
 

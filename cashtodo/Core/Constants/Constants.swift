@@ -38,13 +38,13 @@ enum Constants {
 
     enum DefaultCategory {
         static let items: [(name: String, icon: String)] = [
-            ("Еда", "fork.knife"),
-            ("Транспорт", "car"),
-            ("Покупки", "bag"),
-            ("Развлечения", "gamecontroller"),
-            ("Счета", "doc.text"),
-            ("Здоровье", "heart"),
-            ("Прочее", "tag")
+            (L10n.categoryFood, "fork.knife"),
+            (L10n.categoryTransport, "car"),
+            (L10n.categoryShopping, "bag"),
+            (L10n.categoryEntertainment, "gamecontroller"),
+            (L10n.categoryBills, "doc.text"),
+            (L10n.categoryHealth, "heart"),
+            (L10n.categoryOther, "tag")
         ]
     }
 }
