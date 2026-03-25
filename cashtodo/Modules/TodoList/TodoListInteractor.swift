@@ -13,11 +13,19 @@ final class TodoListInteractor: TodoListBusinessLogic, TodoListDataStore {
     // MARK: - Dependencies
 
     private let todoService: TodoServiceProtocol
+    private let operationService: OperationServiceProtocol
+    private let categoryService: CategoryServiceProtocol
 
     // MARK: - Init
 
-    init(todoService: TodoServiceProtocol) {
+    init(
+        todoService: TodoServiceProtocol,
+        operationService: OperationServiceProtocol,
+        categoryService: CategoryServiceProtocol
+    ) {
         self.todoService = todoService
+        self.operationService = operationService
+        self.categoryService = categoryService
     }
 
     // MARK: - TodoListBusinessLogic
@@ -37,7 +45,23 @@ final class TodoListInteractor: TodoListBusinessLogic, TodoListDataStore {
     func toggleCompletion(at index: Int) {
         guard index >= 0, index < todos.count else { return }
         let todo = todos[index]
+        let wasCompleted = todo.isCompleted
         todoService.toggleCompletion(todo)
+
+        // When completing a todo with price, create a financial operation
+        if !wasCompleted, let price = todo.price, price.compare(NSDecimalNumber.zero) == .orderedDescending {
+            let defaultCategory = categoryService.fetchAllCategories().first
+            if let category = defaultCategory {
+                operationService.createOperation(
+                    title: todo.title,
+                    amount: price,
+                    date: Date(),
+                    category: category,
+                    todoItem: todo
+                )
+            }
+        }
+
         loadTodos()
     }
 }

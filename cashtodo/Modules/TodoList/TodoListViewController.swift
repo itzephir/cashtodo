@@ -141,6 +141,9 @@ extension TodoListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.configure(with: viewModels[indexPath.row])
+        cell.onCheckboxTapped = { [weak self] in
+            self?.interactor?.toggleCompletion(at: indexPath.row)
+        }
         return cell
     }
 }

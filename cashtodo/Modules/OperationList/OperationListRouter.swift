@@ -11,12 +11,14 @@ final class OperationListRouter: OperationListRoutingLogic {
     func navigateToCreate() {
         let editVC = OperationEditAssembly.build()
         let nav = UINavigationController(rootViewController: editVC)
+        nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
 
     func navigateToEdit(operationId: UUID) {
         let editVC = OperationEditAssembly.build(operationId: operationId)
         let nav = UINavigationController(rootViewController: editVC)
+        nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
 

@@ -2,10 +2,17 @@ import UIKit
 
 enum TodoListAssembly {
     static func build() -> UIViewController {
-        let todoService = TodoService(coreDataStack: CoreDataStack.shared)
+        let stack = CoreDataStack.shared
+        let todoService = TodoService(coreDataStack: stack)
+        let operationService = OperationService(coreDataStack: stack)
+        let categoryService = CategoryService(coreDataStack: stack)
 
         let viewController = TodoListViewController()
-        let interactor = TodoListInteractor(todoService: todoService)
+        let interactor = TodoListInteractor(
+            todoService: todoService,
+            operationService: operationService,
+            categoryService: categoryService
+        )
         let presenter = TodoListPresenter()
         let router = TodoListRouter()
 

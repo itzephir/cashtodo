@@ -6,13 +6,17 @@ final class TodoListCell: UITableViewCell {
 
     static let reuseId = "TodoListCell"
 
+    // MARK: - Callbacks
+
+    var onCheckboxTapped: (() -> Void)?
+
     // MARK: - UI
 
-    private let checkboxImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .systemBlue
-        return imageView
+    private let checkboxButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.contentMode = .scaleAspectFit
+        button.tintColor = .systemBlue
+        return button
     }()
 
     private let titleLabel: UILabel = {
@@ -54,12 +58,17 @@ final class TodoListCell: UITableViewCell {
 
     // MARK: - Configuration
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        onCheckboxTapped = nil
+    }
+
     func configure(with viewModel: TodoListCellViewModel) {
         let iconName = viewModel.isCompleted
             ? Constants.Icon.completed
             : Constants.Icon.incomplete
-        checkboxImageView.image = UIImage(systemName: iconName)
-        checkboxImageView.tintColor = viewModel.isCompleted ? .systemGreen : .systemBlue
+        checkboxButton.setImage(UIImage(systemName: iconName), for: .normal)
+        checkboxButton.tintColor = viewModel.isCompleted ? .systemGreen : .systemBlue
 
         titleLabel.text = viewModel.title
         titleLabel.textColor = viewModel.isCompleted ? .secondaryLabel : .label
@@ -77,15 +86,21 @@ final class TodoListCell: UITableViewCell {
 
     // MARK: - Setup
 
+    @objc private func checkboxTapped() {
+        onCheckboxTapped?()
+    }
+
     private func setupUI() {
         selectionStyle = .default
         accessoryType = .disclosureIndicator
 
-        contentView.addSubview(checkboxImageView)
-        checkboxImageView.pinLeft(to: contentView, Constants.UI.standardPadding)
-        checkboxImageView.pinCenterY(to: contentView)
-        checkboxImageView.setWidth(24)
-        checkboxImageView.setHeight(24)
+        checkboxButton.addTarget(self, action: #selector(checkboxTapped), for: .touchUpInside)
+
+        contentView.addSubview(checkboxButton)
+        checkboxButton.pinLeft(to: contentView, Constants.UI.smallPadding)
+        checkboxButton.pinCenterY(to: contentView)
+        checkboxButton.setWidth(44)
+        checkboxButton.setHeight(44)
 
         contentView.addSubview(linkImageView)
         linkImageView.pinRight(to: contentView, Constants.UI.smallPadding)
@@ -98,7 +113,7 @@ final class TodoListCell: UITableViewCell {
         priceLabel.pinCenterY(to: contentView)
 
         contentView.addSubview(titleLabel)
-        titleLabel.pinLeft(to: checkboxImageView.trailingAnchor, Constants.UI.smallPadding)
+        titleLabel.pinLeft(to: checkboxButton.trailingAnchor, Constants.UI.smallPadding)
         titleLabel.pinCenterY(to: contentView)
         titleLabel.pinRight(to: priceLabel.leadingAnchor, Constants.UI.smallPadding)
     }

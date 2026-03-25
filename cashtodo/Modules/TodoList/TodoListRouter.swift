@@ -16,6 +16,7 @@ final class TodoListRouter: TodoListRoutingLogic {
     func navigateToCreate() {
         let createVC = TodoDetailAssembly.build(todoId: nil)
         let nav = UINavigationController(rootViewController: createVC)
+        nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
 }
