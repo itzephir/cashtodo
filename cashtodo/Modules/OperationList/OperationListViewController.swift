@@ -10,6 +10,56 @@ final class OperationListViewController: UIViewController {
     // MARK: - UI
 
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private var tableTopToChips: NSLayoutConstraint!
+    private var tableTopToDateRange: NSLayoutConstraint!
+
+    private let chipScrollView: UIScrollView = {
+        let sv = UIScrollView()
+        sv.showsHorizontalScrollIndicator = false
+        sv.contentInset = UIEdgeInsets(
+            top: 0,
+            left: Constants.UI.standardPadding,
+            bottom: 0,
+            right: Constants.UI.standardPadding
+        )
+        return sv
+    }()
+
+    private let chipStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.spacing = Constants.UI.smallPadding
+        sv.alignment = .center
+        return sv
+    }()
+
+    private let dateRangeContainer: UIView = {
+        let v = UIView()
+        v.isHidden = true
+        v.backgroundColor = .secondarySystemBackground
+        return v
+    }()
+
+    private let fromPicker: UIDatePicker = {
+        let dp = UIDatePicker()
+        dp.datePickerMode = .date
+        dp.preferredDatePickerStyle = .compact
+        return dp
+    }()
+
+    private let toPicker: UIDatePicker = {
+        let dp = UIDatePicker()
+        dp.datePickerMode = .date
+        dp.preferredDatePickerStyle = .compact
+        return dp
+    }()
+
+    private let applyButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Применить", for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .semibold)
+        return btn
+    }()
 
     // MARK: - Data
 
@@ -17,19 +67,24 @@ final class OperationListViewController: UIViewController {
     private var debtItems: [DebtCellViewModel] = []
     private var operationSections: [(categoryName: String, categoryIcon: String, operations: [OperationListCellViewModel])] = []
 
+    private var selectedFilter: DateFilter = .all
+    private var chipButtons: [UIButton] = []
+
     // MARK: - Constants
 
     private enum CellID {
         static let debt = "DebtCell"
         static let operation = "OperationListCell"
-        static let debtHeader = "DebtHeaderCell"
     }
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         configureNavigationBar()
+        configureChipBar()
+        configureDateRange()
         configureTableView()
     }
 
@@ -43,13 +98,85 @@ final class OperationListViewController: UIViewController {
     private func configureNavigationBar() {
         navigationItem.title = "Финансы"
         navigationController?.navigationBar.prefersLargeTitles = true
-
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: Constants.Icon.add),
             style: .plain,
             target: self,
             action: #selector(addButtonTapped)
         )
+    }
+
+    private func configureChipBar() {
+        view.addSubview(chipScrollView)
+        chipScrollView.pinTop(to: view.safeAreaLayoutGuide.topAnchor)
+        chipScrollView.pinLeft(to: view)
+        chipScrollView.pinRight(to: view)
+        chipScrollView.setHeight(Constants.UI.chipBarHeight)
+
+        chipScrollView.addSubview(chipStackView)
+        chipStackView.pinTop(to: chipScrollView)
+        chipStackView.pinBottom(to: chipScrollView)
+        chipStackView.pinLeft(to: chipScrollView)
+        chipStackView.pinRight(to: chipScrollView)
+        chipStackView.pinHeight(to: chipScrollView.heightAnchor)
+
+        let filters: [DateFilter] = DateFilter.presets + [.custom(from: Date(), to: Date())]
+        for filter in filters {
+            let btn = makeChipButton(title: filter.title, tag: chipButtons.count)
+            chipStackView.addArrangedSubview(btn)
+            chipButtons.append(btn)
+        }
+
+        updateChipSelection()
+    }
+
+    private func configureDateRange() {
+        view.addSubview(dateRangeContainer)
+        dateRangeContainer.pinTop(to: chipScrollView.bottomAnchor)
+        dateRangeContainer.pinLeft(to: view)
+        dateRangeContainer.pinRight(to: view)
+
+        let fromLabel = UILabel()
+        fromLabel.text = "От"
+        fromLabel.font = .systemFont(ofSize: Constants.Font.caption, weight: .medium)
+        fromLabel.textColor = .secondaryLabel
+
+        let toLabel = UILabel()
+        toLabel.text = "До"
+        toLabel.font = .systemFont(ofSize: Constants.Font.caption, weight: .medium)
+        toLabel.textColor = .secondaryLabel
+
+        let fromColumn = UIStackView(arrangedSubviews: [fromLabel, fromPicker])
+        fromColumn.axis = .vertical
+        fromColumn.spacing = 4
+        fromColumn.alignment = .leading
+
+        let toColumn = UIStackView(arrangedSubviews: [toLabel, toPicker])
+        toColumn.axis = .vertical
+        toColumn.spacing = 4
+        toColumn.alignment = .leading
+
+        let pickersRow = UIStackView(arrangedSubviews: [fromColumn, toColumn])
+        pickersRow.axis = .horizontal
+        pickersRow.distribution = .fillEqually
+        pickersRow.spacing = Constants.UI.standardPadding
+
+        let root = UIStackView(arrangedSubviews: [pickersRow, applyButton])
+        root.axis = .vertical
+        root.spacing = Constants.UI.smallPadding
+        root.alignment = .fill
+
+        dateRangeContainer.addSubview(root)
+        root.pinTop(to: dateRangeContainer, Constants.UI.smallPadding)
+        root.pinBottom(to: dateRangeContainer, Constants.UI.smallPadding)
+        root.pinLeft(to: dateRangeContainer, Constants.UI.standardPadding)
+        root.pinRight(to: dateRangeContainer, Constants.UI.standardPadding)
+
+        applyButton.setHeight(36)
+        applyButton.layer.cornerRadius = Constants.UI.smallCornerRadius
+        applyButton.backgroundColor = .systemBlue
+        applyButton.setTitleColor(.white, for: .normal)
+        applyButton.addTarget(self, action: #selector(applyDateRange), for: .touchUpInside)
     }
 
     private func configureTableView() {
@@ -59,13 +186,75 @@ final class OperationListViewController: UIViewController {
         tableView.register(OperationListCell.self, forCellReuseIdentifier: CellID.operation)
 
         view.addSubview(tableView)
-        tableView.pin(to: view)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableTopToChips = tableView.topAnchor.constraint(equalTo: chipScrollView.bottomAnchor)
+        tableTopToDateRange = tableView.topAnchor.constraint(equalTo: dateRangeContainer.bottomAnchor)
+        tableTopToChips.isActive = true
+        tableView.pinLeft(to: view)
+        tableView.pinRight(to: view)
+        tableView.pinBottom(to: view)
+    }
+
+    // MARK: - Chip helpers
+
+    private func makeChipButton(title: String, tag: Int) -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.setTitle(title, for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .medium)
+        btn.layer.cornerRadius = Constants.UI.chipHeight / 2
+        btn.clipsToBounds = true
+        btn.contentEdgeInsets = UIEdgeInsets(top: 6, left: 14, bottom: 6, right: 14)
+        btn.tag = tag
+        btn.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
+        return btn
+    }
+
+    private func updateChipSelection() {
+        let allFilters: [DateFilter] = DateFilter.presets + [.custom(from: Date(), to: Date())]
+        for (i, btn) in chipButtons.enumerated() {
+            let isSelected: Bool
+            switch (selectedFilter, allFilters[i]) {
+            case (.all, .all), (.today, .today), (.week, .week), (.month, .month):
+                isSelected = true
+            case (.custom, .custom):
+                isSelected = true
+            default:
+                isSelected = false
+            }
+
+            btn.backgroundColor = isSelected ? .systemBlue : .secondarySystemBackground
+            btn.setTitleColor(isSelected ? .white : .label, for: .normal)
+        }
     }
 
     // MARK: - Actions
 
     @objc private func addButtonTapped() {
         router?.navigateToCreate()
+    }
+
+    @objc private func chipTapped(_ sender: UIButton) {
+        let presets = DateFilter.presets
+        if sender.tag < presets.count {
+            selectedFilter = presets[sender.tag]
+            setDateRangeVisible(false)
+        } else {
+            selectedFilter = .custom(from: fromPicker.date, to: toPicker.date)
+            setDateRangeVisible(true)
+        }
+        updateChipSelection()
+        interactor?.applyFilter(selectedFilter)
+    }
+
+    private func setDateRangeVisible(_ visible: Bool) {
+        dateRangeContainer.isHidden = !visible
+        tableTopToChips.isActive = !visible
+        tableTopToDateRange.isActive = visible
+    }
+
+    @objc private func applyDateRange() {
+        selectedFilter = .custom(from: fromPicker.date, to: toPicker.date)
+        interactor?.applyFilter(selectedFilter)
     }
 
     // MARK: - Helpers

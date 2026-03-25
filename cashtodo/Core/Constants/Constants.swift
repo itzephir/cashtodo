@@ -10,6 +10,8 @@ enum Constants {
         static let buttonHeight: CGFloat = 50
         static let cellHeight: CGFloat = 60
         static let sectionHeaderHeight: CGFloat = 44
+        static let chipBarHeight: CGFloat = 48
+        static let chipHeight: CGFloat = 32
     }
 
     enum Font {

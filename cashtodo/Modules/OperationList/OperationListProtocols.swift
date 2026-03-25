@@ -22,11 +22,34 @@ struct DebtHeaderViewModel {
     let totalDebtText: String
 }
 
+// MARK: - Date Filter
+
+enum DateFilter: Equatable {
+    case all
+    case today
+    case week
+    case month
+    case custom(from: Date, to: Date)
+
+    var title: String {
+        switch self {
+        case .all: "Все"
+        case .today: "Сегодня"
+        case .week: "Неделя"
+        case .month: "Месяц"
+        case .custom: "Период"
+        }
+    }
+
+    static var presets: [DateFilter] { [.all, .today, .week, .month] }
+}
+
 // MARK: - Business Logic (Interactor)
 
 protocol OperationListBusinessLogic: AnyObject {
     func loadData()
     func deleteOperation(at indexPath: IndexPath)
+    func applyFilter(_ filter: DateFilter)
 }
 
 // MARK: - Data Store
