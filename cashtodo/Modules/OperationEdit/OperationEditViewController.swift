@@ -88,12 +88,13 @@ final class OperationEditViewController: UIViewController {
         navigationItem.title = L10n.operationTitle
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .cancel,
+            barButtonSystemItem: .close,
             target: self,
             action: #selector(cancelTapped)
         )
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .save,
+            title: L10n.buttonSave,
+            style: .prominent,
             target: self,
             action: #selector(saveTapped)
         )
@@ -121,17 +122,15 @@ final class OperationEditViewController: UIViewController {
 
         let padding = Constants.UI.standardPadding
         let smallPadding = Constants.UI.smallPadding
-        let pickerHeight: Double = 120
+        let pickerHeight = Constants.UI.pickerHeight
 
         contentView.addSubview(titleTextField)
         titleTextField.pinTop(to: contentView, Constants.UI.largePadding)
-        titleTextField.pinLeft(to: contentView, padding)
-        titleTextField.pinRight(to: contentView, padding)
+        titleTextField.pinHorizontal(to: contentView, padding)
 
         contentView.addSubview(amountTextField)
         amountTextField.pinTop(to: titleTextField.bottomAnchor, padding)
-        amountTextField.pinLeft(to: contentView, padding)
-        amountTextField.pinRight(to: contentView, padding)
+        amountTextField.pinHorizontal(to: contentView, padding)
 
         contentView.addSubview(dateLabel)
         dateLabel.pinTop(to: amountTextField.bottomAnchor, padding)
@@ -147,8 +146,7 @@ final class OperationEditViewController: UIViewController {
 
         contentView.addSubview(categoryPicker)
         categoryPicker.pinTop(to: categoryLabel.bottomAnchor, smallPadding)
-        categoryPicker.pinLeft(to: contentView, padding)
-        categoryPicker.pinRight(to: contentView, padding)
+        categoryPicker.pinHorizontal(to: contentView, padding)
         categoryPicker.setHeight(pickerHeight)
 
         contentView.addSubview(todoLabel)
@@ -157,8 +155,7 @@ final class OperationEditViewController: UIViewController {
 
         contentView.addSubview(todoPicker)
         todoPicker.pinTop(to: todoLabel.bottomAnchor, smallPadding)
-        todoPicker.pinLeft(to: contentView, padding)
-        todoPicker.pinRight(to: contentView, padding)
+        todoPicker.pinHorizontal(to: contentView, padding)
         todoPicker.setHeight(pickerHeight)
         todoPicker.pinBottom(to: contentView, Constants.UI.largePadding)
     }
@@ -206,8 +203,8 @@ extension OperationEditViewController: OperationEditDisplayLogic {
             categoryPicker.selectRow(viewModel.selectedCategoryIndex, inComponent: 0, animated: false)
         }
 
-        if let todoIdx = viewModel.selectedTodoIndex, todoIdx < todos.count {
-            todoPicker.selectRow(todoIdx + 1, inComponent: 0, animated: false)
+        if let todoIndex = viewModel.selectedTodoIndex, todoIndex < todos.count {
+            todoPicker.selectRow(todoIndex + 1, inComponent: 0, animated: false)
         } else {
             todoPicker.selectRow(0, inComponent: 0, animated: false)
         }

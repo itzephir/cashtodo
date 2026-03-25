@@ -20,26 +20,26 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     // MARK: - UI Elements
 
     private let scrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.alwaysBounceVertical = true
-        sv.keyboardDismissMode = .interactive
-        return sv
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        scrollView.keyboardDismissMode = .interactive
+        return scrollView
     }()
 
     private let contentStackView: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = Constants.UI.standardPadding
-        return sv
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = Constants.UI.standardPadding
+        return stackView
     }()
 
     private let titleTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = L10n.labelName
-        tf.font = .systemFont(ofSize: Constants.Font.title)
-        tf.borderStyle = .roundedRect
-        tf.returnKeyType = .next
-        return tf
+        let textField = UITextField()
+        textField.placeholder = L10n.labelName
+        textField.font = .systemFont(ofSize: Constants.Font.title)
+        textField.borderStyle = .roundedRect
+        textField.returnKeyType = .next
+        return textField
     }()
 
     private let descriptionLabel: UILabel = {
@@ -51,19 +51,19 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     }()
 
     private let descriptionTextView: UITextView = {
-        let tv = UITextView()
-        tv.font = .systemFont(ofSize: Constants.Font.title)
-        tv.layer.borderColor = UIColor.separator.cgColor
-        tv.layer.borderWidth = 1
-        tv.layer.cornerRadius = Constants.UI.smallCornerRadius
-        tv.textContainerInset = UIEdgeInsets(
+        let textView = UITextView()
+        textView.font = .systemFont(ofSize: Constants.Font.title)
+        textView.layer.borderColor = UIColor.separator.cgColor
+        textView.layer.borderWidth = 1
+        textView.layer.cornerRadius = Constants.UI.smallCornerRadius
+        textView.textContainerInset = UIEdgeInsets(
             top: Constants.UI.smallPadding,
             left: Constants.UI.smallPadding,
             bottom: Constants.UI.smallPadding,
             right: Constants.UI.smallPadding
         )
-        tv.isScrollEnabled = false
-        return tv
+        textView.isScrollEnabled = false
+        return textView
     }()
 
     private let priceLabel: UILabel = {
@@ -75,12 +75,12 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     }()
 
     private let priceTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = L10n.placeholderPrice
-        tf.font = .systemFont(ofSize: Constants.Font.price)
-        tf.keyboardType = .decimalPad
-        tf.borderStyle = .roundedRect
-        return tf
+        let textField = UITextField()
+        textField.placeholder = L10n.placeholderPrice
+        textField.font = .systemFont(ofSize: Constants.Font.price)
+        textField.keyboardType = .decimalPad
+        textField.borderStyle = .roundedRect
+        return textField
     }()
 
     private let operationsHeaderLabel: UILabel = {
@@ -91,10 +91,10 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
     }()
 
     private let operationsStackView: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = Constants.UI.smallPadding
-        return sv
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = Constants.UI.smallPadding
+        return stackView
     }()
 
     private let emptyOperationsLabel: UILabel = {
@@ -141,21 +141,15 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
 
         scrollView.addSubview(contentStackView)
         contentStackView.pinTop(to: scrollView.contentLayoutGuide.topAnchor, Constants.UI.standardPadding)
-        contentStackView.pinLeft(to: scrollView.contentLayoutGuide.leadingAnchor, Constants.UI.standardPadding)
-        contentStackView.pinRight(to: scrollView.contentLayoutGuide.trailingAnchor, Constants.UI.standardPadding)
         contentStackView.pinBottom(to: scrollView.contentLayoutGuide.bottomAnchor, Constants.UI.standardPadding)
-
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-        contentStackView.widthAnchor.constraint(
-            equalTo: scrollView.frameLayoutGuide.widthAnchor,
-            constant: -2 * Constants.UI.standardPadding
-        ).isActive = true
+        contentStackView.pinLeft(to: scrollView.frameLayoutGuide.leadingAnchor, Constants.UI.standardPadding)
+        contentStackView.pinRight(to: scrollView.frameLayoutGuide.trailingAnchor, Constants.UI.standardPadding)
 
         contentStackView.addArrangedSubview(titleTextField)
 
         contentStackView.addArrangedSubview(descriptionLabel)
         contentStackView.addArrangedSubview(descriptionTextView)
-        descriptionTextView.setHeight(mode: .grOE, 80)
+        descriptionTextView.setHeight(mode: .grOE, Constants.UI.descriptionMinHeight)
 
         contentStackView.addArrangedSubview(priceLabel)
         contentStackView.addArrangedSubview(priceTextField)
@@ -190,13 +184,12 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
         if isEditingMode {
             navigationItem.rightBarButtonItem = UIBarButtonItem(
                 title: L10n.buttonSave,
-                style: .done,
+                style: .prominent,
                 target: self,
                 action: #selector(saveButtonTapped)
             )
             navigationItem.leftBarButtonItem = UIBarButtonItem(
-                title: L10n.buttonCancel,
-                style: .plain,
+                barButtonSystemItem: .close,
                 target: self,
                 action: #selector(cancelButtonTapped)
             )
@@ -332,8 +325,8 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
         container.addSubview(iconImageView)
         iconImageView.pinLeft(to: container.leadingAnchor, Constants.UI.smallPadding)
         iconImageView.pinCenterY(to: container)
-        iconImageView.setWidth(24)
-        iconImageView.setHeight(24)
+        iconImageView.setWidth(Constants.UI.iconSize)
+        iconImageView.setHeight(Constants.UI.iconSize)
 
         let titleLabel = UILabel()
         titleLabel.text = operation.title

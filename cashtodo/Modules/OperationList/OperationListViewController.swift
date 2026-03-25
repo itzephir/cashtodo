@@ -12,58 +12,58 @@ final class OperationListViewController: UIViewController {
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
     private let headerStackView: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = 0
-        return sv
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 0
+        return stackView
     }()
 
     private let chipScrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.showsHorizontalScrollIndicator = false
-        sv.contentInset = UIEdgeInsets(
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.contentInset = UIEdgeInsets(
             top: 0,
             left: Constants.UI.standardPadding,
             bottom: 0,
             right: Constants.UI.standardPadding
         )
-        return sv
+        return scrollView
     }()
 
     private let chipStackView: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .horizontal
-        sv.spacing = Constants.UI.smallPadding
-        sv.alignment = .center
-        return sv
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = Constants.UI.smallPadding
+        stackView.alignment = .center
+        return stackView
     }()
 
     private let dateRangeContainer: UIView = {
-        let v = UIView()
-        v.isHidden = true
-        v.backgroundColor = .secondarySystemBackground
-        return v
+        let view = UIView()
+        view.isHidden = true
+        view.backgroundColor = .secondarySystemBackground
+        return view
     }()
 
     private let fromPicker: UIDatePicker = {
-        let dp = UIDatePicker()
-        dp.datePickerMode = .date
-        dp.preferredDatePickerStyle = .compact
-        return dp
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
+        return datePicker
     }()
 
     private let toPicker: UIDatePicker = {
-        let dp = UIDatePicker()
-        dp.datePickerMode = .date
-        dp.preferredDatePickerStyle = .compact
-        return dp
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
+        return datePicker
     }()
 
     private let applyButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle(L10n.buttonApply, for: .normal)
-        btn.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .semibold)
-        return btn
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.buttonApply, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .semibold)
+        return button
     }()
 
     // MARK: - Data
@@ -124,20 +124,17 @@ final class OperationListViewController: UIViewController {
         // Chip scroll — fixed height, content scrolls horizontally
         chipScrollView.setHeight(Constants.UI.chipBarHeight)
         chipScrollView.addSubview(chipStackView)
-        chipStackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            chipStackView.topAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.topAnchor),
-            chipStackView.bottomAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.bottomAnchor),
-            chipStackView.leadingAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.leadingAnchor),
-            chipStackView.trailingAnchor.constraint(equalTo: chipScrollView.contentLayoutGuide.trailingAnchor),
-            chipStackView.heightAnchor.constraint(equalTo: chipScrollView.frameLayoutGuide.heightAnchor),
-        ])
+        chipStackView.pinTop(to: chipScrollView.contentLayoutGuide.topAnchor)
+        chipStackView.pinBottom(to: chipScrollView.contentLayoutGuide.bottomAnchor)
+        chipStackView.pinLeft(to: chipScrollView.contentLayoutGuide.leadingAnchor)
+        chipStackView.pinRight(to: chipScrollView.contentLayoutGuide.trailingAnchor)
+        chipStackView.pinHeight(to: chipScrollView.frameLayoutGuide.heightAnchor)
 
         let filters: [DateFilter] = DateFilter.presets + [.custom(from: Date(), to: Date())]
         for filter in filters {
-            let btn = makeChipButton(title: filter.title, tag: chipButtons.count)
-            chipStackView.addArrangedSubview(btn)
-            chipButtons.append(btn)
+            let button = makeChipButton(title: filter.title, tag: chipButtons.count)
+            chipStackView.addArrangedSubview(button)
+            chipButtons.append(button)
         }
         updateChipSelection()
 
@@ -167,7 +164,7 @@ final class OperationListViewController: UIViewController {
         pickersRow.distribution = .fillEqually
         pickersRow.spacing = Constants.UI.standardPadding
 
-        applyButton.setHeight(36)
+        applyButton.setHeight(Constants.UI.smallButtonHeight)
         applyButton.layer.cornerRadius = Constants.UI.smallCornerRadius
         applyButton.backgroundColor = .systemBlue
         applyButton.setTitleColor(.white, for: .normal)
@@ -195,7 +192,8 @@ final class OperationListViewController: UIViewController {
     }
 
     private func updateTableHeader() {
-        let width = tableView.bounds.width > 0 ? tableView.bounds.width : UIScreen.main.bounds.width
+        let fallbackWidth = view.window?.windowScene?.screen.bounds.width ?? view.bounds.width
+        let width = tableView.bounds.width > 0 ? tableView.bounds.width : fallbackWidth
         let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
         let size = headerStackView.systemLayoutSizeFitting(
             targetSize,
@@ -209,20 +207,30 @@ final class OperationListViewController: UIViewController {
     // MARK: - Chip helpers
 
     private func makeChipButton(title: String, tag: Int) -> UIButton {
-        let btn = UIButton(type: .system)
-        btn.setTitle(title, for: .normal)
-        btn.titleLabel?.font = .systemFont(ofSize: Constants.Font.subtitle, weight: .medium)
-        btn.layer.cornerRadius = Constants.UI.chipHeight / 2
-        btn.clipsToBounds = true
-        btn.contentEdgeInsets = UIEdgeInsets(top: 6, left: 14, bottom: 6, right: 14)
-        btn.tag = tag
-        btn.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
-        return btn
+        var config = UIButton.Configuration.filled()
+        config.title = title
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var attrs = incoming
+            attrs.font = UIFont.systemFont(ofSize: Constants.Font.subtitle, weight: .medium)
+            return attrs
+        }
+        config.contentInsets = NSDirectionalEdgeInsets(
+            top: Constants.UI.chipPaddingVertical,
+            leading: Constants.UI.chipPaddingHorizontal,
+            bottom: Constants.UI.chipPaddingVertical,
+            trailing: Constants.UI.chipPaddingHorizontal
+        )
+        config.cornerStyle = .capsule
+
+        let button = UIButton(configuration: config)
+        button.tag = tag
+        button.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
+        return button
     }
 
     private func updateChipSelection() {
         let allFilters: [DateFilter] = DateFilter.presets + [.custom(from: Date(), to: Date())]
-        for (i, btn) in chipButtons.enumerated() {
+        for (i, button) in chipButtons.enumerated() {
             let isSelected: Bool
             switch (selectedFilter, allFilters[i]) {
             case (.all, .all), (.today, .today), (.week, .week), (.month, .month):
@@ -233,8 +241,8 @@ final class OperationListViewController: UIViewController {
                 isSelected = false
             }
 
-            btn.backgroundColor = isSelected ? .systemBlue : .secondarySystemBackground
-            btn.setTitleColor(isSelected ? .white : .label, for: .normal)
+            button.configuration?.baseBackgroundColor = isSelected ? .systemBlue : .secondarySystemBackground
+            button.configuration?.baseForegroundColor = isSelected ? .white : .label
         }
     }
 
@@ -340,8 +348,8 @@ extension OperationListViewController: UITableViewDataSource {
         if section == 0 {
             return debtHeader?.totalDebtText
         }
-        let sec = operationSections[section - 1]
-        return "\(sec.categoryIcon) \(sec.categoryName)"
+        let section = operationSections[section - 1]
+        return "\(section.categoryIcon) \(section.categoryName)"
     }
 }
 
@@ -382,17 +390,17 @@ extension OperationListViewController: UITableViewDelegate {
     ) -> UIView? {
         guard section > 0 else { return nil }
 
-        let sec = operationSections[section - 1]
+        let section = operationSections[section - 1]
 
         let header = UIView()
         header.backgroundColor = .clear
 
-        let iconView = UIImageView(image: UIImage(systemName: sec.categoryIcon))
+        let iconView = UIImageView(image: UIImage(systemName: section.categoryIcon))
         iconView.tintColor = .label
         iconView.contentMode = .scaleAspectFit
 
         let label = UILabel()
-        label.text = sec.categoryName
+        label.text = section.categoryName
         label.font = .systemFont(ofSize: Constants.Font.title, weight: .semibold)
 
         let stack = UIStackView(arrangedSubviews: [iconView, label])
@@ -403,8 +411,8 @@ extension OperationListViewController: UITableViewDelegate {
         header.addSubview(stack)
         stack.pinLeft(to: header, Constants.UI.standardPadding)
         stack.pinCenterY(to: header)
-        iconView.setWidth(20)
-        iconView.setHeight(20)
+        iconView.setWidth(Constants.UI.iconSizeMedium)
+        iconView.setHeight(Constants.UI.iconSizeMedium)
 
         return header
     }

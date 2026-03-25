@@ -61,17 +61,17 @@ final class OperationEditInteractor: OperationEditBusinessLogic, OperationEditDa
             let allOperations = operationService.fetchAllOperations()
             existingOperation = allOperations.first { $0.id == operationId }
 
-            if let op = existingOperation {
-                let categoryIndex = categories.firstIndex(where: { $0.id == op.category?.id }) ?? 0
+            if let operation = existingOperation {
+                let categoryIndex = categories.firstIndex(where: { $0.id == operation.category?.id }) ?? 0
                 let todoIndex: Int? = {
-                    guard let linkedTodo = op.todoItem else { return nil }
+                    guard let linkedTodo = operation.todoItem else { return nil }
                     return todos.firstIndex(where: { $0.id == linkedTodo.id })
                 }()
 
                 let viewModel = OperationEditViewModel(
-                    title: op.title,
-                    amountText: op.amount.stringValue,
-                    date: op.date,
+                    title: operation.title,
+                    amountText: operation.amount.stringValue,
+                    date: operation.date,
                     selectedCategoryIndex: categoryIndex,
                     selectedTodoIndex: todoIndex
                 )

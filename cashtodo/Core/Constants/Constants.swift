@@ -12,11 +12,22 @@ enum Constants {
         static let sectionHeaderHeight: CGFloat = 44
         static let chipBarHeight: CGFloat = 48
         static let chipHeight: CGFloat = 32
+        static let chipPaddingVertical: CGFloat = 6
+        static let chipPaddingHorizontal: CGFloat = 14
+        static let smallButtonHeight: CGFloat = 36
+        static let iconSizeSmall: CGFloat = 16
+        static let iconSizeMedium: CGFloat = 20
+        static let iconSize: CGFloat = 24
+        static let iconSizeLarge: CGFloat = 48
+        static let minTapSize: CGFloat = 44
+        static let pickerHeight: CGFloat = 120
+        static let minPriceWidth: CGFloat = 80
+        static let descriptionMinHeight: CGFloat = 80
     }
 
     enum Font {
         static let largeTitle: CGFloat = 28
-        static let title: CGFloat = 17
+        static let title: CGFloat = 18
         static let subtitle: CGFloat = 14
         static let caption: CGFloat = 12
         static let price: CGFloat = 16

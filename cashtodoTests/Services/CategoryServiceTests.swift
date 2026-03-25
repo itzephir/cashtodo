@@ -69,12 +69,12 @@ final class CategoryServiceTests: XCTestCase {
         let category = sut.createCategory(name: "HasOps", iconName: "tag")
 
         // Create an operation directly linked to this category
-        let op = FinancialOperation(context: stack.viewContext)
-        op.id = UUID()
-        op.title = "Test Op"
-        op.amount = NSDecimalNumber(value: 10)
-        op.date = Date()
-        op.category = category
+        let operation = FinancialOperation(context: stack.viewContext)
+        operation.id = UUID()
+        operation.title = "Test Op"
+        operation.amount = NSDecimalNumber(value: 10)
+        operation.date = Date()
+        operation.category = category
         stack.saveContext()
 
         do {

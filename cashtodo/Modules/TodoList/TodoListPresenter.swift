@@ -11,7 +11,7 @@ final class TodoListPresenter: TodoListPresentationLogic {
     private let priceFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.locale = Locale.current
         return formatter
     }()
 

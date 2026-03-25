@@ -84,13 +84,12 @@ final class TodoListViewController: UIViewController {
         emptyStateView.addSubview(emptyImageView)
         emptyImageView.pinTop(to: emptyStateView)
         emptyImageView.pinCenterX(to: emptyStateView)
-        emptyImageView.setWidth(48)
-        emptyImageView.setHeight(48)
+        emptyImageView.setWidth(Constants.UI.iconSizeLarge)
+        emptyImageView.setHeight(Constants.UI.iconSizeLarge)
 
         emptyStateView.addSubview(emptyLabel)
         emptyLabel.pinTop(to: emptyImageView.bottomAnchor, Constants.UI.smallPadding)
-        emptyLabel.pinLeft(to: emptyStateView)
-        emptyLabel.pinRight(to: emptyStateView)
+        emptyLabel.pinHorizontal(to: emptyStateView)
         emptyLabel.pinBottom(to: emptyStateView)
     }
 

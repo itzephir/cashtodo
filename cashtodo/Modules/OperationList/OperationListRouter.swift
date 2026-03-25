@@ -9,21 +9,21 @@ final class OperationListRouter: OperationListRoutingLogic {
     // MARK: - OperationListRoutingLogic
 
     func navigateToCreate() {
-        let editVC = OperationEditAssembly.build()
-        let nav = UINavigationController(rootViewController: editVC)
+        let editViewController = OperationEditAssembly.build()
+        let nav = UINavigationController(rootViewController: editViewController)
         nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
 
     func navigateToEdit(operationId: UUID) {
-        let editVC = OperationEditAssembly.build(operationId: operationId)
-        let nav = UINavigationController(rootViewController: editVC)
+        let editViewController = OperationEditAssembly.build(operationId: operationId)
+        let nav = UINavigationController(rootViewController: editViewController)
         nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
 
     func navigateToTodoDetail(todoId: UUID) {
-        let detailVC = TodoDetailAssembly.build(todoId: todoId)
-        viewController?.navigationController?.pushViewController(detailVC, animated: true)
+        let detailViewController = TodoDetailAssembly.build(todoId: todoId)
+        viewController?.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }

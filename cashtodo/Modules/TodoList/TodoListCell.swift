@@ -99,14 +99,14 @@ final class TodoListCell: UITableViewCell {
         contentView.addSubview(checkboxButton)
         checkboxButton.pinLeft(to: contentView, Constants.UI.smallPadding)
         checkboxButton.pinCenterY(to: contentView)
-        checkboxButton.setWidth(44)
-        checkboxButton.setHeight(44)
+        checkboxButton.setWidth(Constants.UI.minTapSize)
+        checkboxButton.setHeight(Constants.UI.minTapSize)
 
         contentView.addSubview(linkImageView)
         linkImageView.pinRight(to: contentView, Constants.UI.smallPadding)
         linkImageView.pinCenterY(to: contentView)
-        linkImageView.setWidth(16)
-        linkImageView.setHeight(16)
+        linkImageView.setWidth(Constants.UI.iconSizeSmall)
+        linkImageView.setHeight(Constants.UI.iconSizeSmall)
 
         contentView.addSubview(priceLabel)
         priceLabel.pinRight(to: linkImageView.leadingAnchor, Constants.UI.smallPadding)

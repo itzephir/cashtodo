@@ -82,7 +82,7 @@ final class OperationListCell: UITableViewCell {
         contentView.addSubview(amountLabel)
         amountLabel.pinRight(to: contentView, Constants.UI.standardPadding)
         amountLabel.pinCenterY(to: contentView)
-        amountLabel.setWidth(mode: .grOE, 80)
+        amountLabel.setWidth(mode: .grOE, Constants.UI.minPriceWidth)
 
         let textStack = UIStackView(arrangedSubviews: [titleLabel, dateLabel, linkedTodoLabel])
         textStack.axis = .vertical

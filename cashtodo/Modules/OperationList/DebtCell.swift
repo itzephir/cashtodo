@@ -48,13 +48,13 @@ final class DebtCell: UITableViewCell {
         contentView.addSubview(iconView)
         iconView.pinLeft(to: contentView, Constants.UI.standardPadding)
         iconView.pinCenterY(to: contentView)
-        iconView.setWidth(24)
-        iconView.setHeight(24)
+        iconView.setWidth(Constants.UI.iconSize)
+        iconView.setHeight(Constants.UI.iconSize)
 
         contentView.addSubview(priceLabel)
         priceLabel.pinRight(to: contentView, Constants.UI.standardPadding)
         priceLabel.pinCenterY(to: contentView)
-        priceLabel.setWidth(mode: .grOE, 80)
+        priceLabel.setWidth(mode: .grOE, Constants.UI.minPriceWidth)
 
         contentView.addSubview(todoTitleLabel)
         todoTitleLabel.pinLeft(to: iconView.trailingAnchor, Constants.UI.smallPadding)

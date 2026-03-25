@@ -11,7 +11,7 @@ final class OperationListPresenter: OperationListPresentationLogic {
     private lazy var currencyFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.locale = Locale.current
         return formatter
     }()
 
@@ -61,15 +61,15 @@ final class OperationListPresenter: OperationListPresentationLogic {
         let sortedSections = categories.compactMap { category -> (categoryName: String, categoryIcon: String, operations: [OperationListCellViewModel])? in
             let catId = category.id
             guard let group = grouped[catId] else { return nil }
-            let operationViewModels = group.operations.map { op in
+            let operationViewModels = group.operations.map { operation in
                 OperationListCellViewModel(
-                    id: op.id,
-                    title: op.title,
-                    amountText: currencyFormatter.string(from: op.amount) ?? "0",
-                    dateText: dateFormatter.string(from: op.date),
+                    id: operation.id,
+                    title: operation.title,
+                    amountText: currencyFormatter.string(from: operation.amount) ?? "0",
+                    dateText: dateFormatter.string(from: operation.date),
                     categoryIcon: category.iconName,
                     categoryName: category.name,
-                    linkedTodoTitle: op.todoItem?.title
+                    linkedTodoTitle: operation.todoItem?.title
                 )
             }
             return (

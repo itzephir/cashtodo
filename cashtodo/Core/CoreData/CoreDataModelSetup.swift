@@ -43,29 +43,29 @@ enum CoreDataModelSetup: Sendable {
 
         // MARK: - FinancialOperation Entity
 
-        let financialOperationEntity = NSEntityDescription()
-        financialOperationEntity.name = "FinancialOperation"
-        financialOperationEntity.managedObjectClassName = "FinancialOperation"
+        let operationEntity = NSEntityDescription()
+        operationEntity.name = "FinancialOperation"
+        operationEntity.managedObjectClassName = "FinancialOperation"
 
-        let opId = NSAttributeDescription()
-        opId.name = "id"
-        opId.attributeType = .UUIDAttributeType
-        opId.isOptional = false
+        let operationId = NSAttributeDescription()
+        operationId.name = "id"
+        operationId.attributeType = .UUIDAttributeType
+        operationId.isOptional = false
 
-        let opTitle = NSAttributeDescription()
-        opTitle.name = "title"
-        opTitle.attributeType = .stringAttributeType
-        opTitle.isOptional = false
+        let operationTitle = NSAttributeDescription()
+        operationTitle.name = "title"
+        operationTitle.attributeType = .stringAttributeType
+        operationTitle.isOptional = false
 
-        let opAmount = NSAttributeDescription()
-        opAmount.name = "amount"
-        opAmount.attributeType = .decimalAttributeType
-        opAmount.isOptional = false
+        let operationAmount = NSAttributeDescription()
+        operationAmount.name = "amount"
+        operationAmount.attributeType = .decimalAttributeType
+        operationAmount.isOptional = false
 
-        let opDate = NSAttributeDescription()
-        opDate.name = "date"
-        opDate.attributeType = .dateAttributeType
-        opDate.isOptional = false
+        let operationDate = NSAttributeDescription()
+        operationDate.name = "date"
+        operationDate.attributeType = .dateAttributeType
+        operationDate.isOptional = false
 
         // MARK: - Category Entity
 
@@ -73,83 +73,83 @@ enum CoreDataModelSetup: Sendable {
         categoryEntity.name = "Category"
         categoryEntity.managedObjectClassName = "Category"
 
-        let catId = NSAttributeDescription()
-        catId.name = "id"
-        catId.attributeType = .UUIDAttributeType
-        catId.isOptional = false
+        let categoryId = NSAttributeDescription()
+        categoryId.name = "id"
+        categoryId.attributeType = .UUIDAttributeType
+        categoryId.isOptional = false
 
-        let catName = NSAttributeDescription()
-        catName.name = "name"
-        catName.attributeType = .stringAttributeType
-        catName.isOptional = false
+        let categoryName = NSAttributeDescription()
+        categoryName.name = "name"
+        categoryName.attributeType = .stringAttributeType
+        categoryName.isOptional = false
 
-        let catIconName = NSAttributeDescription()
-        catIconName.name = "iconName"
-        catIconName.attributeType = .stringAttributeType
-        catIconName.isOptional = false
-        catIconName.defaultValue = "tag"
+        let categoryIconName = NSAttributeDescription()
+        categoryIconName.name = "iconName"
+        categoryIconName.attributeType = .stringAttributeType
+        categoryIconName.isOptional = false
+        categoryIconName.defaultValue = "tag"
 
         // MARK: - Relationships
 
         // TodoItem.operations <-->> FinancialOperation.todoItem
-        let todoOperationsRel = NSRelationshipDescription()
-        todoOperationsRel.name = "operations"
-        todoOperationsRel.destinationEntity = financialOperationEntity
-        todoOperationsRel.minCount = 0
-        todoOperationsRel.maxCount = 0 // to-many
-        todoOperationsRel.deleteRule = .nullifyDeleteRule
-        todoOperationsRel.isOptional = true
+        let todoOperationsRelation = NSRelationshipDescription()
+        todoOperationsRelation.name = "operations"
+        todoOperationsRelation.destinationEntity = operationEntity
+        todoOperationsRelation.minCount = 0
+        todoOperationsRelation.maxCount = 0 // to-many
+        todoOperationsRelation.deleteRule = .nullifyDeleteRule
+        todoOperationsRelation.isOptional = true
 
-        let opTodoItemRel = NSRelationshipDescription()
-        opTodoItemRel.name = "todoItem"
-        opTodoItemRel.destinationEntity = todoItemEntity
-        opTodoItemRel.minCount = 0
-        opTodoItemRel.maxCount = 1 // to-one
-        opTodoItemRel.deleteRule = .nullifyDeleteRule
-        opTodoItemRel.isOptional = true
+        let operationTodoItemRelation = NSRelationshipDescription()
+        operationTodoItemRelation.name = "todoItem"
+        operationTodoItemRelation.destinationEntity = todoItemEntity
+        operationTodoItemRelation.minCount = 0
+        operationTodoItemRelation.maxCount = 1 // to-one
+        operationTodoItemRelation.deleteRule = .nullifyDeleteRule
+        operationTodoItemRelation.isOptional = true
 
-        todoOperationsRel.inverseRelationship = opTodoItemRel
-        opTodoItemRel.inverseRelationship = todoOperationsRel
+        todoOperationsRelation.inverseRelationship = operationTodoItemRelation
+        operationTodoItemRelation.inverseRelationship = todoOperationsRelation
 
         // FinancialOperation.category <--> Category.operations
-        let opCategoryRel = NSRelationshipDescription()
-        opCategoryRel.name = "category"
-        opCategoryRel.destinationEntity = categoryEntity
-        opCategoryRel.minCount = 0
-        opCategoryRel.maxCount = 1 // to-one
-        opCategoryRel.deleteRule = .nullifyDeleteRule
-        opCategoryRel.isOptional = true
+        let operationCategoryRelation = NSRelationshipDescription()
+        operationCategoryRelation.name = "category"
+        operationCategoryRelation.destinationEntity = categoryEntity
+        operationCategoryRelation.minCount = 0
+        operationCategoryRelation.maxCount = 1 // to-one
+        operationCategoryRelation.deleteRule = .nullifyDeleteRule
+        operationCategoryRelation.isOptional = true
 
-        let catOperationsRel = NSRelationshipDescription()
-        catOperationsRel.name = "operations"
-        catOperationsRel.destinationEntity = financialOperationEntity
-        catOperationsRel.minCount = 0
-        catOperationsRel.maxCount = 0 // to-many
-        catOperationsRel.deleteRule = .denyDeleteRule
-        catOperationsRel.isOptional = true
+        let categoryOperationsRelation = NSRelationshipDescription()
+        categoryOperationsRelation.name = "operations"
+        categoryOperationsRelation.destinationEntity = operationEntity
+        categoryOperationsRelation.minCount = 0
+        categoryOperationsRelation.maxCount = 0 // to-many
+        categoryOperationsRelation.deleteRule = .denyDeleteRule
+        categoryOperationsRelation.isOptional = true
 
-        opCategoryRel.inverseRelationship = catOperationsRel
-        catOperationsRel.inverseRelationship = opCategoryRel
+        operationCategoryRelation.inverseRelationship = categoryOperationsRelation
+        categoryOperationsRelation.inverseRelationship = operationCategoryRelation
 
         // MARK: - Assign properties to entities
 
         todoItemEntity.properties = [
             todoId, todoTitle, todoDescriptionText,
             todoIsCompleted, todoCreatedAt, todoPrice,
-            todoOperationsRel,
+            todoOperationsRelation,
         ]
 
-        financialOperationEntity.properties = [
-            opId, opTitle, opAmount, opDate,
-            opCategoryRel, opTodoItemRel,
+        operationEntity.properties = [
+            operationId, operationTitle, operationAmount, operationDate,
+            operationCategoryRelation, operationTodoItemRelation,
         ]
 
         categoryEntity.properties = [
-            catId, catName, catIconName,
-            catOperationsRel,
+            categoryId, categoryName, categoryIconName,
+            categoryOperationsRelation,
         ]
 
-        model.entities = [todoItemEntity, financialOperationEntity, categoryEntity]
+        model.entities = [todoItemEntity, operationEntity, categoryEntity]
 
         return model
     }

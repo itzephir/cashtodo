@@ -150,10 +150,10 @@ final class OperationServiceTests: XCTestCase {
         let category = makeCategory()
         let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
 
-        let op = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+        let operation = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 60))
 
-        sut.deleteOperation(op)
+        sut.deleteOperation(operation)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 100))
     }
 
@@ -161,10 +161,10 @@ final class OperationServiceTests: XCTestCase {
         let category = makeCategory()
         let todo = todoService.createTodo(title: "Buy food", descriptionText: nil, price: NSDecimalNumber(value: 100))
 
-        let op = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
+        let operation = sut.createOperation(title: "Carrots", amount: NSDecimalNumber(value: 40), date: Date(), category: category, todoItem: todo)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 60))
 
-        sut.updateOperation(op, title: "Carrots", amount: NSDecimalNumber(value: 70), date: Date(), category: category, todoItem: todo)
+        sut.updateOperation(operation, title: "Carrots", amount: NSDecimalNumber(value: 70), date: Date(), category: category, todoItem: todo)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 30))
     }
 
@@ -173,10 +173,10 @@ final class OperationServiceTests: XCTestCase {
         let todo1 = todoService.createTodo(title: "Task 1", descriptionText: nil, price: NSDecimalNumber(value: 100))
         let todo2 = todoService.createTodo(title: "Task 2", descriptionText: nil, price: NSDecimalNumber(value: 200))
 
-        let op = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo1)
+        let operation = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo1)
         XCTAssertEqual(todo1.price, NSDecimalNumber(value: 70))
 
-        sut.updateOperation(op, title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo2)
+        sut.updateOperation(operation, title: "Op", amount: NSDecimalNumber(value: 30), date: Date(), category: category, todoItem: todo2)
         XCTAssertEqual(todo1.price, NSDecimalNumber(value: 100))
         XCTAssertEqual(todo2.price, NSDecimalNumber(value: 170))
     }
@@ -185,10 +185,10 @@ final class OperationServiceTests: XCTestCase {
         let category = makeCategory()
         let todo = todoService.createTodo(title: "Task", descriptionText: nil, price: NSDecimalNumber(value: 100))
 
-        let op = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: todo)
+        let operation = sut.createOperation(title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: todo)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 75))
 
-        sut.updateOperation(op, title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: nil)
+        sut.updateOperation(operation, title: "Op", amount: NSDecimalNumber(value: 25), date: Date(), category: category, todoItem: nil)
         XCTAssertEqual(todo.price, NSDecimalNumber(value: 100))
     }
 

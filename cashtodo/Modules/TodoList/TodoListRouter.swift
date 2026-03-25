@@ -9,13 +9,13 @@ final class TodoListRouter: TodoListRoutingLogic {
     // MARK: - TodoListRoutingLogic
 
     func navigateToDetail(todoId: UUID) {
-        let detailVC = TodoDetailAssembly.build(todoId: todoId)
-        viewController?.navigationController?.pushViewController(detailVC, animated: true)
+        let detailViewController = TodoDetailAssembly.build(todoId: todoId)
+        viewController?.navigationController?.pushViewController(detailViewController, animated: true)
     }
 
     func navigateToCreate() {
-        let createVC = TodoDetailAssembly.build(todoId: nil)
-        let nav = UINavigationController(rootViewController: createVC)
+        let createViewController = TodoDetailAssembly.build(todoId: nil)
+        let nav = UINavigationController(rootViewController: createViewController)
         nav.modalPresentationStyle = .fullScreen
         viewController?.present(nav, animated: true)
     }
