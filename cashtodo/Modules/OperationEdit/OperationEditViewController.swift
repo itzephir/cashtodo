@@ -12,6 +12,8 @@ final class OperationEditViewController: UIViewController {
     private var categories: [CategoryPickerItem] = []
     private var todos: [TodoPickerItem] = []
 
+    private let decimalDelegate = DecimalTextFieldDelegate()
+
     // MARK: - UI
 
     private let scrollView = UIScrollView()
@@ -73,6 +75,7 @@ final class OperationEditViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
+        amountTextField.delegate = decimalDelegate
         configureNavigationBar()
         configurePickers()
         setupLayout()

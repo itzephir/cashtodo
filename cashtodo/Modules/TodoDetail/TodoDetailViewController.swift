@@ -117,11 +117,14 @@ final class TodoDetailViewController: UIViewController, TodoDetailDisplayLogic {
         return button
     }()
 
+    private let decimalDelegate = DecimalTextFieldDelegate()
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        priceTextField.delegate = decimalDelegate
         setupLayout()
         setupActions()
         interactor?.loadTodo()
